@@ -155,12 +155,12 @@ def get_data_url():
     print("\nDataset 2 convertido a Dataframe utilizando la librería requests: \n{}".format(medals_df_2))
 
     # Se guarda la información en un .csv, .json y .xls
-    filename = "athletes/downloaded_medals.{}"
+    filename = "athletes/downloaded_medals{}"
     fullpath = os.path.join(mainpath, filename)
 
-    medals_df_2.to_csv(fullpath.format("csv"), index=False)
-    medals_df_2.to_json(fullpath.format("json"), orient="records")
-    medals_df_2.to_excel(fullpath.format("xlsx"), index=False)
+    medals_df_2.to_csv(fullpath.format(".csv"), index=False)
+    medals_df_2.to_json(fullpath.format(".json"), orient="records")
+    medals_df_2.to_excel(fullpath.format(".xlsx"), index=False)
 
 
 if __name__ == '__main__':
