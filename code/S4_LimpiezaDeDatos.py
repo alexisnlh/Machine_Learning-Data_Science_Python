@@ -165,19 +165,19 @@ def get_data_url():
 
 if __name__ == '__main__':
     # Función para carga de datos a través de la función read_csv
-    # read_data()
+    read_data()
 
     # Función para leer datos de forma manual (se suele utilizar cuando son ficheros muy grandes, 5G o más)
-    # read_data_manual()
+    read_data_manual()
 
     # Funcion para lectura y escritura de fichero de forma manual separados por tabulador (\t)
-    # write_data_manual()
+    write_data_manual()
 
     # Función para leer datos desde una URL
-    # read_url()
+    read_url()
 
     # Función para leer fichero xls y xlsx
-    # read_xls()
+    read_xls()
 
     # Función para leer los datos de una URL externa, procesarlos y convertirlos a un DataFrame para posteriormente guardarlos en un .csv, .json y .xlsx
     get_data_url()
