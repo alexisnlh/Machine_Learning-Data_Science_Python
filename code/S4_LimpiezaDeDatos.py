@@ -145,22 +145,25 @@ def get_data_url():
     print("El dataset tiene {0} filas y {1} columnas".format(counter, n_cols))
 
     # Convierte el diccionario en un dataframe
-    medals_df_1 = pd.DataFrame(main_dict)
-    print("\nDataset 1 convertido a Dataframe utilizando la librería urllib3: \n{}".format(medals_df_1))
+    df_1 = pd.DataFrame(main_dict)
+    print("\nDataset 1 convertido a Dataframe utilizando la librería urllib3: \n{}".format(df_1))
 
     # Exportar la información con la librería requests
     result_2 = requests.get(medals_url, verify=False, stream=True)
     data_2 = result_2.text
-    medals_df_2 = pd.DataFrame([row.split(',') for row in data_2.split('\n')[1:]], columns=[col for col in data_2.split('\n')[0].split(',')])
-    print("\nDataset 2 convertido a Dataframe utilizando la librería requests: \n{}".format(medals_df_2))
+    df_2 = pd.DataFrame([row.split(',') for row in data_2.split('\n')[1:]], columns=[col for col in data_2.split('\n')[0].split(',')])
+    print("\nDataset 2 convertido a Dataframe utilizando la librería requests: \n{}".format(df_2))
 
     # Se guarda la información en un .csv, .json y .xls
-    filename = "athletes/downloaded_medals{}"
+    filename = "athletes/downloaded_medals"
     fullpath = os.path.join(mainpath, filename)
 
-    medals_df_2.to_csv(fullpath.format(".csv"), index=False)
-    medals_df_2.to_json(fullpath.format(".json"), orient="records")
-    medals_df_2.to_excel(fullpath.format(".xlsx"), index=False)
+    df_2.to_csv("{}.csv".format(fullpath), index=False)
+    df_2.to_json("{}.json".format(fullpath), orient="records")
+    df_2.to_excel("{}.xlsx".format(fullpath), index=False)
+    print("Los ficheros se han guardado correctamente en {}".format(fullpath))
+
+    return df_2
 
 
 if __name__ == '__main__':
@@ -180,4 +183,4 @@ if __name__ == '__main__':
     read_xls()
 
     # Función para leer los datos de una URL externa, procesarlos y convertirlos a un DataFrame para posteriormente guardarlos en un .csv, .json y .xlsx
-    get_data_url()
+    medals_df = get_data_url()
