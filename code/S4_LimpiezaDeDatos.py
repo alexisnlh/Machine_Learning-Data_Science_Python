@@ -1,13 +1,17 @@
 import os
+import urllib3
+import requests
 import pandas as pd
 
+# Variables globales
 mainpath = "../datasets"
-filename = "titanic/titanic3.csv"
-fullpath = os.path.join(mainpath, filename)
+medals_url = "http://winterolympicsmedals.com/medals.csv"
 
 
 # Función para carga de datos a través de la función read_csv
 def read_data():
+    filename = "titanic/titanic3.csv"
+    fullpath = os.path.join(mainpath, filename)
     data_0 = pd.read_csv(fullpath)
     print("Primer datasets: \n{}".format(data_0))
 
@@ -81,8 +85,6 @@ def write_data_manual():
 
 # Función para leer datos desde una URL
 def read_url():
-    medals_url = "http://winterolympicsmedals.com/medals.csv"
-
     # Almacenar los datos en dataframe utilizando la librería pandas
     medals_data = pd.read_csv(medals_url)
     print("\nDataset descargado de URL: \n{}".format(medals_data))
@@ -105,18 +107,77 @@ def read_xls():
     titanic3.to_json(mainpath + "/titanic/titanic_custom.json")
 
 
+# Función para leer los datos de una URL externa, procesarlos y convertirlos a un DataFrame para posteriormente guardarlos en un .csv, .json y .xlsx
+def get_data_url():
+    # Exportar la información con la librería urllib3
+    http = urllib3.PoolManager()
+    result_1 = http.request('GET', medals_url)
+    data_1 = result_1.data
+
+    # El objeto data_1 contiene un string binario, se descodifica a 'utf-8'
+    data_1 = data_1.decode('utf-8')
+
+    # Se divide el string en un array de filas
+    row = data_1.split("\n")
+
+    # Se extrae la 1ra línea ya que contiene la cabecera
+    col_names = row[0].split(",")
+    n_cols = len(col_names)
+
+    # Contador para las filas
+    counter = 0
+    main_dict = dict()
+
+    # Inicializa el diccionario con las columnas = lista de las celdas asignadas por columnas
+    for col in col_names:
+        main_dict[col] = list()
+
+    # Almacena en el main_dict cada celda de las filas recorridas
+    for line in row:
+        # Se obvia la primera fila que contiene la cabecera
+        if counter > 0:
+            values = line.strip().split(",")
+            # Se añade cada valor a su respectiva columna del diccionario
+            for i in range(n_cols):
+                main_dict[col_names[i]].append(values[i])
+        counter += 1
+
+    print("El dataset tiene {0} filas y {1} columnas".format(counter, n_cols))
+
+    # Convierte el diccionario en un dataframe
+    medals_df_1 = pd.DataFrame(main_dict)
+    print("\nDataset 1 convertido a Dataframe utilizando la librería urllib3: \n{}".format(medals_df_1))
+
+    # Exportar la información con la librería requests
+    result_2 = requests.get(medals_url, verify=False, stream=True)
+    data_2 = result_2.text
+    medals_df_2 = pd.DataFrame([row.split(',') for row in data_2.split('\n')[1:]], columns=[col for col in data_2.split('\n')[0].split(',')])
+    print("\nDataset 2 convertido a Dataframe utilizando la librería requests: \n{}".format(medals_df_2))
+
+    # Se guarda la información en un .csv, .json y .xls
+    filename = "athletes/downloaded_medals.{}"
+    fullpath = os.path.join(mainpath, filename)
+
+    medals_df_2.to_csv(fullpath.format("csv"), index=False)
+    medals_df_2.to_json(fullpath.format("json"), orient="records")
+    medals_df_2.to_excel(fullpath.format("xlsx"), index=False)
+
+
 if __name__ == '__main__':
     # Función para carga de datos a través de la función read_csv
-    read_data()
+    # read_data()
 
     # Función para leer datos de forma manual (se suele utilizar cuando son ficheros muy grandes, 5G o más)
-    read_data_manual()
+    # read_data_manual()
 
     # Funcion para lectura y escritura de fichero de forma manual separados por tabulador (\t)
-    write_data_manual()
+    # write_data_manual()
 
     # Función para leer datos desde una URL
-    read_url()
+    # read_url()
 
     # Función para leer fichero xls y xlsx
-    read_xls()
+    # read_xls()
+
+    # Función para leer los datos de una URL externa, procesarlos y convertirlos a un DataFrame para posteriormente guardarlos en un .csv, .json y .xlsx
+    get_data_url()
