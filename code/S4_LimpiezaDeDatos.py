@@ -13,7 +13,7 @@ def read_data():
     filename = "titanic/titanic3.csv"
     fullpath = os.path.join(mainpath, filename)
     data_0 = pd.read_csv(fullpath)
-    print("Primer datasets: \n{}".format(data_0))
+    print(f"Primer datasets del read_data(): \n{data_0}")
 
     """ Parámetros de la función read_csv:
         dtype = cambia el formato de las columnas indicadas
@@ -27,13 +27,13 @@ def read_data():
         data = pd.read_csv(filepath_or_buffer="../datasets/titanic/titanic3.csv", sep=",", dtype={"ingresos": np.float64, "edad": np.int32}, header=0, names=["ingresos", "edad"], skiprows=12, index_col=None, skip_blank_lines=False, na_filter=False) """
 
     data_1 = pd.read_csv(filepath_or_buffer=fullpath, sep=",", skip_blank_lines=True, na_filter=False)
-    print("\nSegundo datasets: \n{}".format(data_1))
+    print(f"\nSegundo datasets del read_data(): \n{data_1}")
 
     # Para cambiar la cabecera a partir de un fichero a parte del datasets
     data_2_cols = pd.read_csv("{}/customer-churn-model/Customer Churn Columns.csv".format(mainpath))
     data_2_col_list = data_2_cols["Column_Names"].to_list()
     data_2 = pd.read_csv("{}/customer-churn-model/Customer Churn Model.txt".format(mainpath), header=None, names=data_2_col_list, skiprows=1)
-    print("\nTercer datasets: \n{}".format(data_2))
+    print(f"\nTercer datasets del read_data(): \n{data_2}")
 
 
 # Función para leer datos de forma manual (se suele utilizar cuando son ficheros muy grandes, 5G o más)
@@ -60,11 +60,11 @@ def read_data_manual():
             main_dict[cols[i]].append(values[i])
         counter += 1
 
-    print("El dataset tiene {0} filas y {1} columnas".format(counter, n_cols))
+    print(f"El dataset tiene {counter} filas y {n_cols} columnas del read_data_manual()")
 
     # Convierte el diccionario en un dataframe
     df3 = pd.DataFrame(main_dict)
-    print("\nDataset convertido a Dataframe con la libreria pandas: \n{}".format(df3))
+    print(f"\nDataset convertido a Dataframe con la libreria pandas del read_data_manual(): \n{df3}")
 
 
 # Función para lectura y escritura de fichero de forma manual separados por tabulador (\t)
@@ -80,14 +80,14 @@ def write_data_manual():
                 outfile1.write("\n")
 
     df4 = pd.read_csv(outfile, sep="\t")
-    print("\nDataset separado por \\t: \n{}".format(df4))
+    print(f"\nDataset separado por \\t del write_data_manual(): \n{df4}")
 
 
 # Función para leer datos desde una URL
 def read_url():
     # Almacenar los datos en dataframe utilizando la librería pandas
     medals_data = pd.read_csv(medals_url)
-    print("\nDataset descargado de URL: \n{}".format(medals_data))
+    print(f"\nDataset descargado de URL del read_url(): \n{medals_data}")
 
 
 # Función para leer fichero xls y xlsx
@@ -99,8 +99,8 @@ def read_xls():
     titanic2 = pd.read_excel(fullpath_1, "titanic3")
     titanic3 = pd.read_excel(fullpath_2, "titanic3")
 
-    print("\nDataset del fichero xls: \n{}".format(titanic2))
-    print("\nDataset del fichero xlsx: \n{}".format(titanic3))
+    print(f"\nDataset del fichero xls del read_xls(): \n{titanic2}")
+    print(f"\nDataset del fichero xlsx del read_xls(): \n{titanic3}")
 
     titanic2.to_csv(mainpath + "/titanic/titanic_custom.csv")
     titanic3.to_excel(mainpath + "/titanic/titanic_custom.xls")
@@ -142,17 +142,17 @@ def get_data_url():
                 main_dict[col_names[i]].append(values[i])
         counter += 1
 
-    print("El dataset tiene {0} filas y {1} columnas".format(counter, n_cols))
+    print(f"El dataset tiene {counter} filas y {n_cols} columnas del get_data_url()")
 
     # Convierte el diccionario en un dataframe
     df_1 = pd.DataFrame(main_dict)
-    print("\nDataset 1 convertido a Dataframe utilizando la librería urllib3: \n{}".format(df_1))
+    print(f"\nDataset 1 convertido a Dataframe utilizando la librería urllib3 del get_data_url(): \n{df_1}")
 
     # Exportar la información con la librería requests
     result_2 = requests.get(medals_url, verify=False, stream=True)
     data_2 = result_2.text
     df_2 = pd.DataFrame([row.split(',') for row in data_2.split('\n')[1:]], columns=[col for col in data_2.split('\n')[0].split(',')])
-    print("\nDataset 2 convertido a Dataframe utilizando la librería requests: \n{}".format(df_2))
+    print(f"\nDataset 2 convertido a Dataframe utilizando la librería requests del get_data_url(): \n{df_2}")
 
     # Se guarda la información en un .csv, .json y .xls
     filename = "athletes/downloaded_medals"
@@ -161,9 +161,38 @@ def get_data_url():
     df_2.to_csv("{}.csv".format(fullpath), index=False)
     df_2.to_json("{}.json".format(fullpath), orient="records")
     df_2.to_excel("{}.xlsx".format(fullpath), index=False)
-    print("Los ficheros se han guardado correctamente en {}".format(fullpath))
+    print(f"Los ficheros se han guardado correctamente en {fullpath} del get_data_url()")
 
     return df_2
+
+
+# Función del resumen de los datos: dimensiones y estructuras
+def dim_estrc():
+    filename = "titanic/titanic3.csv"
+    fullpath = os.path.join(mainpath, filename)
+    data = pd.read_csv(fullpath)
+
+    # Print los 5 primeros registros
+    print(f"Primer datasets del dim_estrc(): \n{data.head()}")
+
+    # Print los 8 últimos registros
+    print(f"\nPrimer datasets del dim_estrc(): \n{data.tail(8)}")
+
+    # Obtener las dimensiones del DataFrame
+    print(f"\nLas dimensiones del DataFrame del dim_estrc() son: {data.shape[0]} filas y {data.shape[1]} columnas")
+
+    """ Resumen de los estadísticos básicos de las variables numéricas:
+            count: cuántos objetos hay no nulos por cada columna
+            mean: el promedio
+            std: desviación estándar
+            min: valor mínimo
+            25%, 50%, 75: diferentes cuantiles
+            max: valor máximo
+    """
+    print(f"\nEl resumen estadístico básico del DataFrame del dim_estrc() es: \n{data.describe()}")
+
+    # Obtener el tipo de dato de cada columna
+    print(f"\nEl formato de las columnas del DataFrame del dim_estrc() es: \n{data.dtypes}")
 
 
 if __name__ == '__main__':
@@ -184,3 +213,7 @@ if __name__ == '__main__':
 
     # Función para leer los datos de una URL externa, procesarlos y convertirlos a un DataFrame para posteriormente guardarlos en un .csv, .json y .xlsx
     medals_df = get_data_url()
+
+    # ****** Data cleaning - Análisis preliminar de los datos ******
+    # Función del resumen de los datos: dimensiones y estructuras
+    dim_estrc()
